@@ -92,7 +92,6 @@ func (api *RestApi) handleErrorForStatus(response *http.Response) error {
 		if response.StatusCode >= 400 && response.StatusCode < 600 {
 			return ErrUnknown
 		}
-
 	}
 	return nil
 
@@ -111,7 +110,6 @@ func (api *RestApi) Get(url string, Requestdata interface{}) (*http.Response, er
 	log.Printf("making get request Url: %s Data: %v \n", url, Requestdata)
 	response, err := api.MakeHttpRequest(http.MethodGet, url, Requestdata)
 	if err != nil {
-
 		log.Printf("http get request failed : %v \n", err)
 		return nil, err
 	}
@@ -130,14 +128,13 @@ func (api *RestApi) Delete(url string, Requestdata interface{}) (*http.Response,
 	if err != nil {
 		log.Printf("http Delete request failed :%v  ", err)
 		return nil, err
-
 	}
 	err = api.handleErrorForStatus(response)
 	if err != nil {
 		log.Printf("error in http response %v \n", err)
 		return nil, err
-
 	}
+	return response, nil
 
 }
 
@@ -147,14 +144,11 @@ func (api *RestApi) Post(url string, Requestdata interface{}) (*http.Response, e
 	log.Printf("making post request to %s , data : %v \n", url, Requestdata)
 	response, err := api.MakeHttpRequest(http.MethodPost, url, Requestdata)
 	if err != nil {
-
-		log.Printf("failed to make Http Post request : %v \n", err)
+		log.Printf("http Post request failed : %v \n", err)
 		return nil, err
-
 	}
 	err = api.handleErrorForStatus(response)
 	if err != nil {
-
 		log.Printf("error in http response: %v \n", err)
 		return nil, err
 	}
@@ -164,10 +158,11 @@ func (api *RestApi) Post(url string, Requestdata interface{}) (*http.Response, e
 
 // PATCH method
 func (api *RestApi) Patch(url string, Requestdata interface{}) (*http.Response, error) {
+	log.Printf("making http Patch request , Url: %s ,Data: %s \n", url, Requestdata)
 	response, err := api.MakeHttpRequest(http.MethodPatch, url, Requestdata)
 	if err != nil {
 
-		log.Printf("failed to make Http Patch request: %v \n", err)
+		log.Printf("Http Patch request failed: %v \n", err)
 		return nil, err
 	}
 	err = api.handleErrorForStatus(response)

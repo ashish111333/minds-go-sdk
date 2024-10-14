@@ -1,6 +1,4 @@
 package datasources
 
-
-
-
-type 
+type DatabaseConfig struct {
+}
