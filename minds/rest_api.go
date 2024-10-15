@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -28,6 +29,16 @@ func NewRestApi(apiKey, baseUrl string) *RestApi {
 
 	if baseUrl == "" {
 		baseUrl = "https://mdb.ai"
+	}
+	// remove any trailing / in the base url if present
+	if strings.HasSuffix(baseUrl, "/") {
+		baseUrl = strings.TrimRight(baseUrl, "/")
+
+	}
+	// add "/api" at the end of baseUrl if not present
+	if !strings.HasSuffix(baseUrl, "/api") {
+		baseUrl += "/api"
+
 	}
 
 	return &RestApi{
