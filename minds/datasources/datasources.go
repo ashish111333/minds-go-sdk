@@ -23,35 +23,79 @@ type DataSources struct {
 	Api minds.RestApi
 }
 
-func (d *DataSources) create(DsConfig *DatabaseConfig, replace bool) {
-	name = DsConfig.Name
+func (d *DataSources) create(DsConfig *DatabaseConfig, replace bool) error {
+	name := DsConfig.Name
+	if replace {
+		_, err := d.get(name)
+		if err != nil {
+			log.Printf("failed to replace Datasource: %v \n", err)
+		}
+		err = d.drop(name)
+		if err != nil {
+			log.Printf("failed to Delete Datasource: %v \n", err)
+		}
+	}
+	_, err := d.Api.Post("/datasources", DsConfig)
+	if err != nil {
+		log.Printf("failed to create datasource: %v \n", err)
+		return err
+	}
+	return nil
+}
 
-	d.Api.Post("/datasources", DsConfig)
+func (d *DataSources) list() (*[]DataSource, error) {
+	log.Printf("making Get request Url: /datasources\n")
+	resp, err := d.Api.Get("/datasources", nil)
+	if err != nil {
+		log.Printf("failed to get list of datasources: %v \n", err)
+		return nil, err
+	}
+	defer resp.Body.Close()
+	var data []map[string]interface{}
+	var datasources []DataSource
+
+	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		log.Printf("failed to decode json: %v \n", err)
+		return nil, err
+	}
+	for _, v := range data {
+		ds := DataSource{
+			DatabaseConfig: DatabaseConfig{
+				Name:           v["name"].(string),
+				Engine:         v["engine"].(string),
+				Description:    v["description"].(string),
+				ConnectionData: v["connection_data"].(map[string]string),
+				Tables:         v["tables"].([]string),
+			},
+		}
+		datasources = append(datasources, ds)
+	}
+	return &datasources, nil
 
 }
-func (d *DataSources) list() {
 
-}
 func (d *DataSources) get(name string) (*DataSource, error) {
-	log.Printf("Making Get request Url:%s", "/datasources"+name)
+	log.Printf("Making Get request Url:%s \n", "/datasources"+name)
 	resp, err := d.Api.Get("/datasources"+name, nil)
 	if err != nil {
-		log.Printf("failed to get datasource :", err)
+		log.Printf("failed to get datasource : %v \n", err)
 	}
+	defer resp.Body.Close()
 	var data map[string]interface{}
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
-		log.Printf("failed to decode json :%v", err)
+		log.Printf("failed to decode json : %v \n", err)
 		return nil, err
 
 	}
 	return &DataSource{
 		DatabaseConfig: DatabaseConfig{
-			Name:           data["name"],
-			Engine:         data["engine"],
-			Description:    data["description"],
-			ConnectionData: data["connection_data"],
-			Tables:         data["tables"],
+			Name:           data["name"].(string),
+			Engine:         data["engine"].(string),
+			Description:    data["description"].(string),
+			ConnectionData: data["connection_data"].(map[string]string),
+			Tables:         data["tables"].([]string),
 		},
 	}, nil
 
@@ -59,12 +103,11 @@ func (d *DataSources) get(name string) (*DataSource, error) {
 
 func (d *DataSources) drop(name string) error {
 
-	log.Printf("Making Delete request Url: %s", "/datasources/"+name)
+	log.Printf("Making Delete request Url: %s \n", "/datasources/"+name)
 	_, err := d.Api.Delete("/datasources/"+name, nil)
 	if err != nil {
 		log.Printf("failed to delete Datasource: %v \n", err)
 		return err
 	}
 	return nil
-
 }

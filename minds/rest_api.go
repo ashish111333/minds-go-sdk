@@ -60,7 +60,6 @@ func (api *RestApi) MakeHttpRequest(httpMethod, url string, RequestData interfac
 
 		}
 	}
-
 	//create request
 	request, err := http.NewRequest(httpMethod, api.BaseUrl+url, bytes.NewBuffer(jsonData))
 	if err != nil {

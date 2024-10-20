@@ -1,7 +1,6 @@
 package minds
 
 import (
-	"github.com/ashish111333/minds-go-sdk/minds"
 	"github.com/ashish111333/minds-go-sdk/minds/datasources"
 )
 
