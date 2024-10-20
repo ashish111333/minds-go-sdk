@@ -5,14 +5,15 @@ import (
 )
 
 type Mind struct {
-	ModeName    string
-	provider    string
-	CreatedAt   string
-	UpdatedAt   string
+	ModeName  string
+	provider  string
+	CreatedAt string
+	UpdatedAt string
+	Parameters
 	datasources *datasources.DataSources
 }
 
-func NewMind() {
+func NewMind(name, modelName, provider) {
 
 }
 
