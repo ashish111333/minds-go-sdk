@@ -9,5 +9,25 @@ type Mind struct {
 	provider    string
 	CreatedAt   string
 	UpdatedAt   string
-	datasources *datasources.DataSource
+	datasources *datasources.DataSources
+}
+
+func NewMind() {
+
+}
+
+func (mind *Mind) Update() {
+
+}
+
+func (mind *Mind) AddDatasource() {
+
+}
+
+func (mind *Mind) DeleteDatasource() {
+
+}
+
+func (mind *Mind) Completion() {
+
 }

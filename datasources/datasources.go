@@ -105,7 +105,6 @@ func (d *DataSources) Get(name string) (*DataSource, error) {
 }
 
 func (d *DataSources) Drop(name string) error {
-
 	log.Printf("Making Delete request Url: %s \n", "/datasources/"+name)
 	_, err := d.Api.Delete("/datasources/"+name, nil)
 	if err != nil {
