@@ -20,17 +20,17 @@ type DataSource struct {
 }
 
 type DataSources struct {
-	Api minds.RestApi
+	Api *minds.RestApi
 }
 
-func (d *DataSources) create(DsConfig *DatabaseConfig, replace bool) error {
+func (d *DataSources) Create(DsConfig *DatabaseConfig, replace bool) error {
 	name := DsConfig.Name
 	if replace {
-		_, err := d.get(name)
+		_, err := d.Get(name)
 		if err != nil {
 			log.Printf("failed to replace Datasource: %v \n", err)
 		}
-		err = d.drop(name)
+		err = d.Drop(name)
 		if err != nil {
 			log.Printf("failed to Delete Datasource: %v \n", err)
 		}
@@ -43,7 +43,7 @@ func (d *DataSources) create(DsConfig *DatabaseConfig, replace bool) error {
 	return nil
 }
 
-func (d *DataSources) list() (*[]DataSource, error) {
+func (d *DataSources) List() (*[]DataSource, error) {
 	log.Printf("making Get request Url: /datasources\n")
 	resp, err := d.Api.Get("/datasources", nil)
 	if err != nil {
@@ -75,7 +75,7 @@ func (d *DataSources) list() (*[]DataSource, error) {
 
 }
 
-func (d *DataSources) get(name string) (*DataSource, error) {
+func (d *DataSources) Get(name string) (*DataSource, error) {
 	log.Printf("Making Get request Url:%s \n", "/datasources"+name)
 	resp, err := d.Api.Get("/datasources"+name, nil)
 	if err != nil {
@@ -101,7 +101,7 @@ func (d *DataSources) get(name string) (*DataSource, error) {
 
 }
 
-func (d *DataSources) drop(name string) error {
+func (d *DataSources) Drop(name string) error {
 
 	log.Printf("Making Delete request Url: %s \n", "/datasources/"+name)
 	_, err := d.Api.Delete("/datasources/"+name, nil)
