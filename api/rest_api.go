@@ -1,4 +1,4 @@
-package minds
+package api
 
 import (
 	"bytes"

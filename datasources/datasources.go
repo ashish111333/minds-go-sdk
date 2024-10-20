@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/ashish111333/minds-go-sdk/minds"
+	"github.com/ashish111333/minds-go-sdk/api"
 )
 
 type DatabaseConfig struct {
@@ -20,9 +20,12 @@ type DataSource struct {
 }
 
 type DataSources struct {
-	Api *minds.RestApi
+	Api *api.RestApi
 }
 
+// creates a new instance for Datasources struct to be done
+
+// creates a new datasource
 func (d *DataSources) Create(DsConfig *DatabaseConfig, replace bool) error {
 	name := DsConfig.Name
 	if replace {
