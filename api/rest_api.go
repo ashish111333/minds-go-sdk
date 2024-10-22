@@ -78,6 +78,7 @@ func (api *RestApi) MakeHttpRequest(httpMethod, url string, RequestData interfac
 
 		return nil, fmt.Errorf("failed to make http request : %w", err)
 	}
+	defer response.Body.Close()
 	// check for status code errors
 	err = api.handleErrorForStatus(response)
 	if err != nil {
@@ -89,7 +90,6 @@ func (api *RestApi) MakeHttpRequest(httpMethod, url string, RequestData interfac
 
 // helper function for http status code errors
 func (api *RestApi) handleErrorForStatus(response *http.Response) error {
-	defer response.Body.Close()
 	switch response.StatusCode {
 	case 404:
 		return ErrObjectNotFound
