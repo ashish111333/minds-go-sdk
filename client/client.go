@@ -12,12 +12,13 @@ type Client struct {
 	Minds       *minds.Minds
 }
 
-func NewClient() *Client {
+func NewClient(apiKey, baseUrl string) *Client {
+	apiCLient := api.NewRestApi(apiKey, baseUrl)
 
 	return &Client{
-		Api:         api.NewRestApi(),
-		Datasources: 
-		Minds: 
+		Api:         apiCLient,
+		Datasources: datasources.NewDatasources(apiCLient),
+		Minds:       minds.NewMinds(apiCLient),
 	}
 
 }

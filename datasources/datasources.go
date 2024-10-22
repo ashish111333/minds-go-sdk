@@ -24,6 +24,13 @@ type DataSources struct {
 }
 
 // creates a new instance for Datasources struct to be done
+func NewDatasources(api *api.RestApi) *DataSources {
+
+	return &DataSources{
+		Api: api,
+	}
+
+}
 
 // creates a new datasource
 func (d *DataSources) Create(DsConfig *DatabaseConfig, replace bool) error {
