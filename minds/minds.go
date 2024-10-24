@@ -10,30 +10,59 @@ import (
 )
 
 type Mind struct {
-	ModeName    string                 `json:"model_name"`
-	Provider    string                 `json:"provider"`
-	CreatedAt   string                 `json:"created_at"`
-	UpdatedAt   string                 `json:"updated_at"`
-	Parameters  map[string]interface{} `json:"parameters"`
-	Datasources interface{}            `json:"datasources"`
+	api            *api.RestApi
+	project        string
+	dss            *datasources.DataSources
+	PromptTemplate string
+	Name           string                 `json:"name"`
+	ModeName       string                 `json:"model_name"`
+	Provider       string                 `json:"provider"`
+	CreatedAt      string                 `json:"created_at"`
+	UpdatedAt      string                 `json:"updated_at"`
+	Parameters     map[string]interface{} `json:"parameters"`
+	Datasources    interface{}            `json:"datasources"`
 }
 
-func (mind *Mind) Update(mindConfig *Mind) {
+func (mind *Mind) Update(mindConfig *Mind) error {
 	var data map[string]interface{}
-	if mindConfig.Datasources != nil {
-
-		_, ok := mindConfig.Datasources.([]string)
-		_, ok = mindConfig.Datasources.(datasources.DatabaseConfig)
-
+	if mindConfig.Datasources != "" {
+	}
+	if mindConfig.ModeName != "" {
+		data["model_name"] = mindConfig.ModeName
+	}
+	if mindConfig.Provider != "" {
+		data["provider"] = mindConfig.Provider
+	}
+	if mindConfig.Parameters == nil {
+		data["parameters"] = make(map[string]interface{})
 	}
 
+	resp, err := mind.api.Post("/projects/"+mind.project+"/minds/"+mind.Name, data)
+	if err != nil {
+		return fmt.Errorf("failed to update mind: %w", err)
+	}
+	defer resp.Body.Close()
+
+	return nil
 }
 
-func (mind *Mind) AddDatasource() {
+func (mind *Mind) AddDatasource(ds interface{}) error {
+
+	ds_name, err := mind.CheckDatasource(ds)
+	if err != nil {
+		fmt.Errorf("failed to check datasource: %w", err)
+	}
+	var data map[string]interface{}
+	data["name"] = ds_name
+	resp, err := mind.api.Post("/projects/"+mind.project+"/minds/"+"/datasources", data)
+	if err != nil {
+		return fmt.Errorf("failed to add datasource to mind : %w", err)
+	}
+	defer resp.Body.Close()
 
 }
 
-func (mind *Mind) DeleteDatasource() {
+func (mind *Mind) DeleteDatasource(ds interface{}) {
 
 }
 
@@ -41,20 +70,7 @@ func (mind *Mind) Completion() {
 
 }
 
-type Minds struct {
-	Api     api.RestApi
-	Project string
-}
-
-func NewMinds(api *api.RestApi) *Minds {
-
-	return &Minds{
-		Api:     *api,
-		Project: "mindsdb",
-	}
-}
-
-func (minds *Minds) Create(mindConfig *Mind, replace bool) (*Mind, error) {
+func (minds *Mind) Create(mindConfig *Mind, replace bool) (*Mind, error) {
 	if replace {
 
 	}
@@ -66,7 +82,7 @@ func (minds *Minds) Create(mindConfig *Mind, replace bool) (*Mind, error) {
 
 	}
 
-	resp, err := minds.Api.Post("/projects/"+minds.Project+"/minds", mindConfig)
+	resp, err := minds.api.Post("/projects/"+minds.project+"/minds", mindConfig)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create mind : %w", err)
 	}
@@ -74,17 +90,18 @@ func (minds *Minds) Create(mindConfig *Mind, replace bool) (*Mind, error) {
 
 }
 
-func (minds *Minds) Drop(name string) error {
-	_, err := minds.Api.Delete("/projects/"+minds.Project+"/minds/"+name, nil)
+func (minds *Mind) Drop(name string) error {
+	resp, err := minds.api.Delete("/projects/"+minds.project+"/minds/"+name, nil)
 	if err != nil {
 		return fmt.Errorf("failed to create mind: %w", err)
 	}
+
 	return nil
 
 }
 
-func (minds *Minds) List() (*[]Mind, error) {
-	resp, err := minds.Api.Get("/projects/"+minds.Project+"/minds", nil)
+func (minds *Mind) List() ([]Mind, error) {
+	resp, err := minds.api.Get("/projects/"+minds.project+"/minds", nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get  minds list : %w", err)
 	}
@@ -105,11 +122,11 @@ func (minds *Minds) List() (*[]Mind, error) {
 		minds_slice = append(minds_slice, mind)
 	}
 
-	return &minds_slice, nil
+	return minds_slice, nil
 }
 
-func (minds *Minds) Get(name string) (*Mind, error) {
-	resp, err := minds.Api.Get("/projects/"+minds.Project+"/minds/"+name, nil)
+func (minds *Mind) Get(name string) (*Mind, error) {
+	resp, err := minds.api.Get("/projects/"+minds.project+"/minds/"+name, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get mind: %w ", err)
 	}
@@ -130,19 +147,39 @@ func (minds *Minds) Get(name string) (*Mind, error) {
 
 }
 
-func (minds *Minds) checkDatasource(ds interface{}) string {
-
+func (minds *Mind) CheckDatasource(ds interface{}) (string, error) {
 	var name string
 	ds_val, ok := ds.(datasources.DataSource)
 	if ok {
 		name = ds_val.Name
-		return name
+		return name, nil
 	}
 	dc_val, ok := ds.(datasources.DatabaseConfig)
 	if ok {
-
+		ds, err := minds.dss.Get(dc_val.Name)
+		if err != nil {
+			return "", fmt.Errorf("failed to get Datasource : %w", err)
+		}
+		err = minds.dss.Create(&ds.DatabaseConfig, false)
+		if err != nil {
+			return "", fmt.Errorf("failed to create Datasource: %w", err)
+		}
 		name = dc_val.Name
 
+	} else {
+
+		return "", fmt.Errorf("unknown datasource")
 	}
 
+	return name, nil
+}
+
+// util function for client
+func NewMindsClient(api *api.RestApi) *Mind {
+
+	return &Mind{
+		api:     api,
+		project: "mindsdb",
+		dss:     datasources.NewDatasources(api),
+	}
 }

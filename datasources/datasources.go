@@ -2,6 +2,7 @@ package datasources
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/ashish111333/minds-go-sdk/api"
@@ -42,7 +43,7 @@ func (d *DataSources) Create(DsConfig *DatabaseConfig, replace bool) error {
 		}
 		err = d.Drop(name)
 		if err != nil {
-			log.Printf("failed to Delete Datasource: %v \n", err)
+			return fmt.Errorf("failed to get Datasource")
 		}
 	}
 	_, err := d.Api.Post("/datasources", DsConfig)
@@ -86,7 +87,7 @@ func (d *DataSources) List() (*[]DataSource, error) {
 }
 
 func (d *DataSources) Get(name string) (*DataSource, error) {
-	log.Printf("Making Get request Url:%s \n", "/datasources"+name)
+	log.Printf("Making Get request	 Url:%s \n", "/datasources"+name)
 	resp, err := d.Api.Get("/datasources"+name, nil)
 	if err != nil {
 		log.Printf("failed to get datasource : %v \n", err)
@@ -97,6 +98,10 @@ func (d *DataSources) Get(name string) (*DataSource, error) {
 	if err != nil {
 		log.Printf("failed to decode json : %v \n", err)
 		return nil, err
+
+	}
+	if data["engine"] == "" {
+		return nil, fmt.Errorf("wrong type of datasource: %ws", err)
 
 	}
 	return &DataSource{

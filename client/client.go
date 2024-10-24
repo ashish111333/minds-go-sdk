@@ -9,16 +9,21 @@ import (
 type Client struct {
 	Api         *api.RestApi
 	Datasources *datasources.DataSources
-	Minds       *minds.Minds
+	Minds       *minds.Mind
+}
+type ApiConfig struct {
+	ApiKey  string
+	BaseUrl string
 }
 
-func NewClient(apiKey, baseUrl string) *Client {
-	apiCLient := api.NewRestApi(apiKey, baseUrl)
+func NewClient(ac ApiConfig) *Client {
+
+	apiCLient := api.NewRestApi(ac.ApiKey, ac.BaseUrl)
 
 	return &Client{
 		Api:         apiCLient,
 		Datasources: datasources.NewDatasources(apiCLient),
-		Minds:       minds.NewMinds(apiCLient),
+		Minds:       minds.NewMindsClient(apiCLient),
 	}
 
 }
