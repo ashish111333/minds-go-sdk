@@ -1,6 +1,8 @@
 package client
 
 import (
+	"fmt"
+
 	"github.com/ashish111333/minds-go-sdk/api"
 	"github.com/ashish111333/minds-go-sdk/datasources"
 	"github.com/ashish111333/minds-go-sdk/minds"
@@ -11,19 +13,18 @@ type Client struct {
 	Datasources *datasources.DataSources
 	Minds       *minds.Mind
 }
-type ApiConfig struct {
-	ApiKey  string
-	BaseUrl string
-}
 
-func NewClient(ac ApiConfig) *Client {
+func NewClient(apiKey, baseUrl string) (*Client, error) {
 
-	apiCLient := api.NewRestApi(ac.ApiKey, ac.BaseUrl)
+	if apiKey == "" {
+		return nil, fmt.Errorf("Api key cant be empty")
+	}
+	apiCLient := api.NewRestApi(apiKey, baseUrl)
 
 	return &Client{
 		Api:         apiCLient,
 		Datasources: datasources.NewDatasources(apiCLient),
 		Minds:       minds.NewMindsClient(apiCLient),
-	}
+	}, nil
 
 }

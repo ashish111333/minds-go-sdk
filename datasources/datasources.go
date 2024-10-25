@@ -24,7 +24,7 @@ type DataSources struct {
 	Api *api.RestApi
 }
 
-// creates a new instance for Datasources struct to be done
+// creates a new instance for Datasources struct
 func NewDatasources(api *api.RestApi) *DataSources {
 
 	return &DataSources{
@@ -90,19 +90,16 @@ func (d *DataSources) Get(name string) (*DataSource, error) {
 	log.Printf("Making Get request	 Url:%s \n", "/datasources"+name)
 	resp, err := d.Api.Get("/datasources"+name, nil)
 	if err != nil {
-		log.Printf("failed to get datasource : %v \n", err)
+		return nil, fmt.Errorf("failed to get datsource: %w", err)
 	}
 	defer resp.Body.Close()
 	var data map[string]interface{}
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
-		log.Printf("failed to decode json : %v \n", err)
-		return nil, err
-
+		return nil, fmt.Errorf("failed to decode json : %w", err)
 	}
 	if data["engine"] == "" {
 		return nil, fmt.Errorf("wrong type of datasource: %ws", err)
-
 	}
 	return &DataSource{
 		DatabaseConfig: DatabaseConfig{
@@ -120,8 +117,7 @@ func (d *DataSources) Drop(name string) error {
 	log.Printf("Making Delete request Url: %s \n", "/datasources/"+name)
 	_, err := d.Api.Delete("/datasources/"+name, nil)
 	if err != nil {
-		log.Printf("failed to delete Datasource: %v \n", err)
-		return err
+		return fmt.Errorf("failed to delete Datasource :%w", err)
 	}
 	return nil
 }
