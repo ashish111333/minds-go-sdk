@@ -54,7 +54,7 @@ func (d *DataSources) Create(DsConfig *DatabaseConfig, replace bool) error {
 	return nil
 }
 
-func (d *DataSources) List() (*[]DataSource, error) {
+func (d *DataSources) List() ([]DataSource, error) {
 	resp, err := d.Api.Get("/datasources", nil)
 	if err != nil {
 		log.Printf("failed to get list of datasources: %v \n", err)
@@ -81,7 +81,7 @@ func (d *DataSources) List() (*[]DataSource, error) {
 		}
 		datasources = append(datasources, ds)
 	}
-	return &datasources, nil
+	return datasources, nil
 
 }
 

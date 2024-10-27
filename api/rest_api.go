@@ -48,7 +48,6 @@ func NewRestApi(apiKey, baseUrl string) *RestApi {
 
 // makes http requests for GET,POST,DELETE,PATCH methods
 func (api *RestApi) MakeHttpRequest(httpMethod, url string, RequestData interface{}) (*http.Response, error) {
-
 	// prepare json data if request method is post or patch
 	var jsonData []byte
 	var err error
@@ -71,7 +70,6 @@ func (api *RestApi) MakeHttpRequest(httpMethod, url string, RequestData interfac
 		"Content-Type":  "application/json",
 	}
 	api.setHeaders(request, headers)
-
 	// make request
 	response, err := api.Client.Do(request)
 	if err != nil {
@@ -156,5 +154,4 @@ func (api *RestApi) Patch(url string, Requestdata interface{}) (*http.Response, 
 		return nil, err
 	}
 	return response, nil
-
 }
