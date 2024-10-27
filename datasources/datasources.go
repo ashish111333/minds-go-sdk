@@ -55,7 +55,6 @@ func (d *DataSources) Create(DsConfig *DatabaseConfig, replace bool) error {
 }
 
 func (d *DataSources) List() (*[]DataSource, error) {
-	log.Printf("making Get request Url: /datasources\n")
 	resp, err := d.Api.Get("/datasources", nil)
 	if err != nil {
 		log.Printf("failed to get list of datasources: %v \n", err)
@@ -87,7 +86,6 @@ func (d *DataSources) List() (*[]DataSource, error) {
 }
 
 func (d *DataSources) Get(name string) (*DataSource, error) {
-	log.Printf("Making Get request	 Url:%s \n", "/datasources"+name)
 	resp, err := d.Api.Get("/datasources"+name, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get datsource: %w", err)
@@ -114,7 +112,6 @@ func (d *DataSources) Get(name string) (*DataSource, error) {
 }
 
 func (d *DataSources) Drop(name string) error {
-	log.Printf("Making Delete request Url: %s \n", "/datasources/"+name)
 	_, err := d.Api.Delete("/datasources/"+name, nil)
 	if err != nil {
 		return fmt.Errorf("failed to delete Datasource :%w", err)
