@@ -44,7 +44,6 @@ func (mind *Mind) Update(mindConfig *MindConfig) error {
 				return fmt.Errorf("failed to update mind: %w", err)
 			}
 			dsNames = append(dsNames, Name)
-
 		}
 		mindConfig.Datasources = dsNames
 
@@ -58,13 +57,11 @@ func (mind *Mind) Update(mindConfig *MindConfig) error {
 	if mindConfig.Parameters == nil {
 		data["parameters"] = make(map[string]interface{})
 	}
-
 	resp, err := mind.api.Post("/projects/"+mind.project+"/minds/"+mind.Name, data)
 	if err != nil {
 		return fmt.Errorf("failed to update mind: %w", err)
 	}
 	defer resp.Body.Close()
-
 	return nil
 }
 
@@ -100,7 +97,6 @@ func (mind *Mind) DeleteDatasource(ds interface{}) error {
 	if dsName == "" {
 		return fmt.Errorf("unknown datasource")
 	}
-
 	resp, err := mind.api.Delete("/projects/"+mind.project+"minds"+"/datasources/"+dsName, nil)
 	if err != nil {
 		return fmt.Errorf("failed to delete datasource for mind : %w", err)
@@ -122,9 +118,17 @@ type Minds struct {
 
 // takes MindConfig of type Mind and creates a Mind from it,
 // Datasources can be type string,Datasource or DatabaseConfig any other type is rejected
-func (minds *Minds) Create(mindConfig *Mind, replace bool) (*Mind, error) {
+func (minds *Minds) Create(mindConfig *MindConfig, replace bool) (*Mind, error) {
 	if replace {
+		_, err := minds.Get(mindConfig.Name)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get mind : %w", err)
 
+		}
+		err = minds.Drop(mindConfig.Name)
+		if err != nil {
+			return nil, fmt.Errorf("failed to delete mind : %w", err)
+		}
 	}
 	dsNames := []interface{}{}
 	if mindConfig.Datasources != nil {

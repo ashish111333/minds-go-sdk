@@ -12,14 +12,14 @@ import (
 func checkDatasource(ds interface{}, dss *datasources.DataSources) (string, error) {
 
 	var name string
-	ds_val, ok := ds.(datasources.DataSource)
+	dsStruct, ok := ds.(datasources.DataSource)
 	if ok {
-		name = ds_val.Name
+		name = dsStruct.Name
 		return name, nil
 	}
-	dc_val, ok := ds.(datasources.DatabaseConfig)
+	dsConfigStruct, ok := ds.(datasources.DatabaseConfig)
 	if ok {
-		ds, err := dss.Get(dc_val.Name)
+		ds, err := dss.Get(dsConfigStruct.Name)
 		if err != nil {
 			return "", fmt.Errorf("failed to get Datasource : %w", err)
 		}
@@ -27,7 +27,7 @@ func checkDatasource(ds interface{}, dss *datasources.DataSources) (string, erro
 		if err != nil {
 			return "", fmt.Errorf("failed to create Datasource: %w", err)
 		}
-		name = dc_val.Name
+		name = dsConfigStruct.Name
 
 	} else {
 		return "", fmt.Errorf("unknown datasource")
