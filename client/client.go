@@ -14,12 +14,18 @@ type Client struct {
 	Minds       *minds.Mind
 }
 
-func NewClient(apiKey, baseUrl string) (*Client, error) {
+func NewClient(apiKey string, baseUrl ...string) (*Client, error) {
 
-	if apiKey == "" {
-		return nil, fmt.Errorf("Api key cant be empty")
+	var base_url string
+	if len(baseUrl) == 0 {
+		base_url = ""
+	} else {
+		base_url = baseUrl[0]
 	}
-	apiCLient := api.NewRestApi(apiKey, baseUrl)
+	if apiKey == "" {
+		return nil, fmt.Errorf("api key cant be empty")
+	}
+	apiCLient := api.NewRestApi(apiKey, base_url)
 
 	return &Client{
 		Api:         apiCLient,
