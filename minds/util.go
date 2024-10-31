@@ -43,6 +43,6 @@ func NewMindsClient(api *api.RestApi) *Mind {
 	return &Mind{
 		api:     api,
 		project: "mindsdb",
-		dss:     datasources.NewDatasources(api),
+		dss:     datasources.NewDatasourcesClient(api),
 	}
 }

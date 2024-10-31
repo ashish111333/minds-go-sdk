@@ -29,7 +29,7 @@ func NewClient(apiKey string, baseUrl ...string) (*Client, error) {
 
 	return &Client{
 		Api:         apiCLient,
-		Datasources: datasources.NewDatasources(apiCLient),
+		Datasources: datasources.NewDatasourcesClient(apiCLient),
 		Minds:       minds.NewMindsClient(apiCLient),
 	}, nil
 
