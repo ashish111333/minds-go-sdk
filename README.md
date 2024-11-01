@@ -30,12 +30,12 @@
                     description='<DESCRIPTION-OF-YOUR-DATA>',
                     engine='postgres',
                     connection_data={
-                        'user': 'demo_user',
-                        'password': 'demo_password',
-                        'host': 'samples.mindsdb.com',
-                        'port': 5432,
-                        'database': 'demo',
-                        'schema': 'demo_data'
+                        "user": 'demo_user',
+                        "password": "demo_password",
+                        "host": "samples.mindsdb.com",
+                        "port": 5432,
+                        "database": 'demo',
+                        "schema": 'demo_data'
                     },
                     tables=['<TABLE-1>', '<TABLE-2>']
                 }
@@ -57,14 +57,14 @@
 
 
 
-## Managing Minds
+### Managing Minds
 
 You can create a mind or replace an existing one with the same name.
 
 ```go
  ```
 
-### List minds
+#### List minds
 
 get list of minds you created
 
@@ -73,7 +73,7 @@ get list of minds you created
     minds,err:=client.minds.list()
     
 ```
-### get mind by name
+#### Get mind by name
 
 02:01 - 15m ahead 
 you can fetch details of a mind by its name.
@@ -82,9 +82,33 @@ you can fetch details of a mind by its name.
 mind,err:=client.minds.get("mind_name")
 ```
 
-### Remove mind
-you can remove a mind given it's name
+#### Remove mind
+you can remove a mind given it's name using drop method
 
 ```go
 err=client.minds.drop("mind_name")
-````
+```
+
+
+### Managing Datasources
+
+#### List Datsources
+To view all data sources:
+
+    ```go
+    ```
+#### Remove a Data Source
+To delete a data source, use the following command:
+
+```go
+err=client.Datasources.remove("Datasource_name")
+```
+#### Get Datasource by name
+You can fetch details of a specific data source by its name.
+```go
+ds,err=client.Datasources.Get("Datasource_name")
+```
+
+
+
+
