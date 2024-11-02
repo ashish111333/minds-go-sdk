@@ -74,8 +74,6 @@ get list of minds you created
     
 ```
 #### Get mind by name
-
-02:01 - 15m ahead 
 you can fetch details of a mind by its name.
 
 ```go 

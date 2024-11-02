@@ -70,7 +70,7 @@ func (d *DataSources) List() ([]DataSource, error) {
 
 // Get's Datasource takes name as argument
 func (d *DataSources) Get(name string) (*DataSource, error) {
-	resp, err := d.Api.Get("/datasources"+name, nil)
+	resp, err := d.Api.Get("/datasources/"+name, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get datsource: %w", err)
 	}
