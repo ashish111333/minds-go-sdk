@@ -72,7 +72,7 @@ func TestDeleteDatasource(t *testing.T) {
 			t.Fatalf("expected delete method, got %s", r.Method)
 		}
 		if !strings.HasSuffix(r.URL.Path, "/api/datasources/ds_name") {
-			t.Fatal("wrong Request Url")
+			t.Fatal("wrong Request URL")
 		}
 	}))
 	defer mockServer.Close()
@@ -82,14 +82,29 @@ func TestDeleteDatasource(t *testing.T) {
 	}
 	err = client.Datasources.Drop("ds_name")
 	if err != nil {
-		t.Fatal("failed to delete datasource")
+		t.Fatal(err)
 	}
 
 }
 
 func TestCreateDatasource(t *testing.T) {
 	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			t.Fatal("expected POST got", r.Method)
+		}
+		if !strings.HasSuffix(r.URL.Path, "/api/datasources") {
+			t.Fatal("wrong request URL")
+		}
 
 	}))
+	defer mockServer.Close()
+	client, err := client.NewClient(apiKey, mockServer.URL)
+	if err != nil {
+		t.Fatal("failed to create client: ", err)
+	}
+	err = client.Datasources.Create(&exampleDatasource.DatabaseConfig, false)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 }
