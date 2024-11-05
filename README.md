@@ -94,8 +94,10 @@ err=client.minds.drop("mind_name")
 #### List Datsources
 To view all data sources:
 
-    ```go
-    ```
+```go
+
+```
+
 #### Remove a Data Source
 To delete a data source, use the following command:
 
