@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/ashish111333/minds-go-sdk/api"
-
 	"github.com/ashish111333/minds-go-sdk/datasources"
 )
 

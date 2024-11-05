@@ -24,7 +24,7 @@
     import "github.com/ashish111333/minds-go-sdk/datasources"
 
     func main(){
-        postgres_config:=datasources.Datasource{
+        postgresConfig:=datasources.Datasource{
             DatabaseConfig:{
                    name='my_datasource',
                     description='<DESCRIPTION-OF-YOUR-DATA>',

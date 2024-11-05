@@ -3,7 +3,6 @@ package datasources
 import (
 	"encoding/json"
 	"fmt"
-
 	"github.com/ashish111333/minds-go-sdk/api"
 )
 
