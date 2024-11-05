@@ -62,6 +62,7 @@
 You can create a mind or replace an existing one with the same name.
 
 ```go
+    
  ```
 
 #### List minds

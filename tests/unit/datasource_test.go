@@ -95,6 +95,14 @@ func TestCreateDatasource(t *testing.T) {
 		if !strings.HasSuffix(r.URL.Path, "/api/datasources") {
 			t.Fatal("wrong request URL")
 		}
+		var ds datasources.DataSource
+		err := json.NewDecoder(r.Body).Decode(&ds)
+		if err != nil {
+			t.Fatal("failed to decode to json")
+		}
+		if !compareDs(ds, exampleDatasource) {
+			t.Fatal("datasources doesn't match")
+		}
 
 	}))
 	defer mockServer.Close()
