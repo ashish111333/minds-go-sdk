@@ -1,5 +1,10 @@
 # minds-go-sdk 
 
+## Installation
+```go
+go get github.com/ashish111333/minds-go-sdk
+```
+
 ## Getting started
 1. Initialize the client
 
